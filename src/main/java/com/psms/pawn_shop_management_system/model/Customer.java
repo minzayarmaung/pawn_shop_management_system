@@ -16,7 +16,10 @@ public class Customer extends MasterData {
     private String name;
 
     private String phoneNumber;
+
+    @Column(unique = true) // Can cause Duplicate Error if the same customer have another one pawned again.
     private String nationalId;
+
     private String address;
 
 }
