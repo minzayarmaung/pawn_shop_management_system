@@ -34,4 +34,9 @@ public class PawnItem extends MasterData {
     @OneToMany(mappedBy = "pawnItem" , cascade = CascadeType.ALL , orphanRemoval = true)
     private List<PawnItemDetails> pawnItemDetailsList = new ArrayList<>();
 
+    @ManyToOne
+    @JoinColumn(name = "customer_id", nullable = false)
+    private Customer customer;
+
 }
+
