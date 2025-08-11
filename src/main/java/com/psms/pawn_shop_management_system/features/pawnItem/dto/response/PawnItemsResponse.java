@@ -14,6 +14,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class PawnItemsResponse {
 
+    private long id;
     private String customerName;
     private String customerNrc;
     private String category;

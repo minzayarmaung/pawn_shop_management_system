@@ -1,5 +1,6 @@
 package com.psms.pawn_shop_management_system.features.pawnItem.repository;
 
+import com.psms.pawn_shop_management_system.common.constant.Status;
 import com.psms.pawn_shop_management_system.model.PawnItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,8 +29,9 @@ public interface PawnItemRepository extends JpaRepository<PawnItem, Long> {
     )
     long existsByDetailAndStatus(String fieldName, String fieldValue, long status);
 
-    List<PawnItem> findByCategory(String category);
+    List<PawnItem> findByCategoryAndStatus(String category , Status status);
 
+    List<PawnItem> findByStatus(Status status);
 
 
 

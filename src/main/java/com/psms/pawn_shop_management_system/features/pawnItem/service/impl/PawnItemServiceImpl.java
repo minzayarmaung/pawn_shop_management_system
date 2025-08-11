@@ -1,5 +1,6 @@
 package com.psms.pawn_shop_management_system.features.pawnItem.service.impl;
 
+import com.psms.pawn_shop_management_system.common.constant.Status;
 import com.psms.pawn_shop_management_system.config.response.dto.ApiResponse;
 import com.psms.pawn_shop_management_system.config.response.util.ServerUtils;
 import com.psms.pawn_shop_management_system.features.pawnItem.dto.request.PawnItemRequest;
@@ -21,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -129,13 +131,13 @@ public class PawnItemServiceImpl implements PawnItemService {
     }
 
     @Override
-    public ApiResponse getPawnItems(String category, String sortBy) {
+    public ApiResponse getPawnItems(final String category,final String sortBy) {
         List<PawnItem> items;
 
         if(category != null && !category.equalsIgnoreCase("All")){
-            items = pawnItemRepository.findByCategory(category);
+            items = pawnItemRepository.findByCategoryAndStatus(category , Status.ACTIVE);
         } else {
-            items = pawnItemRepository.findAll();
+            items = pawnItemRepository.findByStatus(Status.ACTIVE);
         }
 
         // Optional sorting logic
@@ -147,6 +149,7 @@ public class PawnItemServiceImpl implements PawnItemService {
 
         List<PawnItemsResponse> responseList = items.stream()
                 .map(item -> new PawnItemsResponse(
+                        item.getId(),
                         item.getCustomer().getName(),
                         item.getCustomer().getNationalId(),
                         item.getCategory(),
@@ -164,6 +167,31 @@ public class PawnItemServiceImpl implements PawnItemService {
                 .code(200)
                 .message("Pawn items fetched successfully")
                 .data(responseList)
+                .build();
+    }
+
+    @Override
+    public ApiResponse deletePawnItem(final long id) {
+        Optional<PawnItem> pawnItemOpt = pawnItemRepository.findById(id);
+
+        if (pawnItemOpt.isEmpty()) {
+            return ApiResponse.builder()
+                    .success(0)
+                    .code(404)
+                    .message("Pawn item not found")
+                    .data(null)
+                    .build();
+        }
+
+        PawnItem pawnItem = pawnItemOpt.get();
+        pawnItem.setStatus(Status.INACTIVE);
+        pawnItemRepository.save(pawnItem);
+
+        return ApiResponse.builder()
+                .success(1)
+                .code(200)
+                .message("Pawn item Deleted successfully")
+                .data(null)
                 .build();
     }
 }

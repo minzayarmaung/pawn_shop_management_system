@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum Status implements BaseEnum<Integer>{
     ACTIVE(1),
-    INACTIVE(2);
+    INACTIVE(4);
 
     private final int value;
 

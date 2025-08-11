@@ -51,8 +51,7 @@ public class PawnItemController {
             description = "Get All Pawn Items",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Get All Pawn Items",
-                    required = true,
-                    content = @Content(schema = @Schema(implementation = PawnItemRequest.class))
+                    required = true
             ),
             responses = {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Pawn items fetched successfully"),
@@ -66,5 +65,29 @@ public class PawnItemController {
         ApiResponse response = pawnItemService.getPawnItems(category , sortBy);
         return ResponseUtils.buildResponse(servletRequest , response);
     }
+
+    @RequestMapping("/delete-pawn-item")
+    @PostMapping
+    @Operation(
+            summary = "Delete Pawn Item",
+            description = "Delete Pawn Item",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Delete Pawn Item",
+                    required = true
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Pawn Item Deleted successfully"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request")
+            }
+    )
+    public ResponseEntity<ApiResponse> deletePawnItem(
+            @RequestParam(required = false) long id,
+            HttpServletRequest servletRequest
+    ){
+        ApiResponse response = pawnItemService.deletePawnItem(id);
+        return ResponseUtils.buildResponse(servletRequest , response);
+    }
+
+
 
 }
