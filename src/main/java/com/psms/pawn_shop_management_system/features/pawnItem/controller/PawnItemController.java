@@ -47,15 +47,15 @@ public class PawnItemController {
     @RequestMapping("/all-pawn-items")
     @GetMapping
     @Operation(
-            summary = "Create a new Pawn Item",
-            description = "Create a new Item.",
+            summary = "Get All Pawn Items",
+            description = "Get All Pawn Items",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Pawn Item creation request",
+                    description = "Get All Pawn Items",
                     required = true,
                     content = @Content(schema = @Schema(implementation = PawnItemRequest.class))
             ),
             responses = {
-                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Pawn Item created successfully"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Pawn items fetched successfully"),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request")
             }
     )
