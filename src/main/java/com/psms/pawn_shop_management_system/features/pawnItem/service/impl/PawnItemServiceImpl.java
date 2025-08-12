@@ -134,8 +134,10 @@ public class PawnItemServiceImpl implements PawnItemService {
     public ApiResponse getPawnItems(final String category,final String sortBy) {
         List<PawnItem> items;
 
-        if(category != null && !category.equalsIgnoreCase("All")){
-            items = pawnItemRepository.findByCategoryAndStatus(category , Status.ACTIVE);
+        if (category != null && category.equalsIgnoreCase("CheckedOutItems")) {
+            items = pawnItemRepository.findByCategoryAndStatus(category, Status.INACTIVE);
+        } else if (category != null && !category.equalsIgnoreCase("All")) {
+            items = pawnItemRepository.findByCategoryAndStatus(category, Status.ACTIVE);
         } else {
             items = pawnItemRepository.findByStatus(Status.ACTIVE);
         }
