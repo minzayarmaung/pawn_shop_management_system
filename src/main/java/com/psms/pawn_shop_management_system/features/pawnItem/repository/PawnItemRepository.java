@@ -4,6 +4,7 @@ import com.psms.pawn_shop_management_system.common.constant.Status;
 import com.psms.pawn_shop_management_system.model.PawnItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,6 +34,8 @@ public interface PawnItemRepository extends JpaRepository<PawnItem, Long> {
 
     List<PawnItem> findByStatus(Status status);
 
+    @Query(value = "SELECT * FROM pawn_item WHERE category = :category AND status = :status", nativeQuery = true)
+    List<PawnItem> findByCategoryAndStatusNative(@Param("category") String category, @Param("status") int status);
 
 
 }

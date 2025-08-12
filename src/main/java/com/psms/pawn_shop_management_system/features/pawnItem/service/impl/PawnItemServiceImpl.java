@@ -33,16 +33,17 @@ public class PawnItemServiceImpl implements PawnItemService {
     private final PawnItemRepository pawnItemRepository;
     private final PawnTransactionRepository pawnTransactionRepository;
     private final ServerUtils serverUtils;
+    private LocalDateTime currentDateTime;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public ApiResponse createPawnItem(PawnItemRequest request) {
+        currentDateTime = LocalDateTime.parse(serverUtils.getLocalDateTime(), formatter);
 
         boolean isAlreadyExist = false;
         Customer customer = new Customer();
         PawnItem pawnItem = new PawnItem();
         PawnTransaction transaction = new PawnTransaction();
-        LocalDateTime currentDateTime = LocalDateTime.parse(serverUtils.getLocalDateTime(), formatter);
 
         // Check If the Item is Active in the System
         if (request.getCategory().equalsIgnoreCase("Phone")) {
@@ -134,8 +135,10 @@ public class PawnItemServiceImpl implements PawnItemService {
     public ApiResponse getPawnItems(final String category,final String sortBy) {
         List<PawnItem> items;
 
-        if (category != null && category.equalsIgnoreCase("CheckedOutItems")) {
+        if (category != null && sortBy.equalsIgnoreCase("CheckedOutItems") && !category.equalsIgnoreCase("all")) {
             items = pawnItemRepository.findByCategoryAndStatus(category, Status.INACTIVE);
+        } else if (category !=null && sortBy.equalsIgnoreCase("CheckedOutItems") && category.equalsIgnoreCase("all")){
+            items = pawnItemRepository.findByStatus(Status.INACTIVE);
         } else if (category != null && !category.equalsIgnoreCase("All")) {
             items = pawnItemRepository.findByCategoryAndStatus(category, Status.ACTIVE);
         } else {
@@ -174,8 +177,8 @@ public class PawnItemServiceImpl implements PawnItemService {
 
     @Override
     public ApiResponse deletePawnItem(final long id) {
-        Optional<PawnItem> pawnItemOpt = pawnItemRepository.findById(id);
 
+        Optional<PawnItem> pawnItemOpt = pawnItemRepository.findById(id);
         if (pawnItemOpt.isEmpty()) {
             return ApiResponse.builder()
                     .success(0)
@@ -185,8 +188,18 @@ public class PawnItemServiceImpl implements PawnItemService {
                     .build();
         }
 
+        // Parent Item
         PawnItem pawnItem = pawnItemOpt.get();
         pawnItem.setStatus(Status.INACTIVE);
+        pawnItem.setDeletedAt(currentDateTime);
+
+        // Item Details
+        if(pawnItem.getPawnItemDetailsList() != null){
+            pawnItem.getPawnItemDetailsList().forEach(detail -> {
+                detail.setStatus(Status.INACTIVE);
+                detail.setDeletedAt(currentDateTime);
+            });
+        }
         pawnItemRepository.save(pawnItem);
 
         return ApiResponse.builder()
