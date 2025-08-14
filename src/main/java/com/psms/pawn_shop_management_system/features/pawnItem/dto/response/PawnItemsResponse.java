@@ -17,6 +17,8 @@ public class PawnItemsResponse {
     private long id;
     private String customerName;
     private String customerNrc;
+    private String customerAddress;
+    private String customerPhone;
     private String category;
     private BigDecimal amount;
 
@@ -27,5 +29,6 @@ public class PawnItemsResponse {
     private LocalDate dueDate;
 
     private String status;
+    private String description;
     private Map<String, String> details;
 }

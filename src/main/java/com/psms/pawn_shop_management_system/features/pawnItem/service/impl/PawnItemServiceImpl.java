@@ -157,11 +157,14 @@ public class PawnItemServiceImpl implements PawnItemService {
                         item.getId(),
                         item.getCustomer().getName(),
                         item.getCustomer().getNationalId(),
+                        item.getCustomer().getAddress(),
+                        item.getCustomer().getPhoneNumber(),
                         item.getCategory(),
                         BigDecimal.valueOf(item.getAmount()),
                         item.getPawnDate(),
                         item.getDueDate(),
                         item.getStatus().name(),
+                        item.getDescription(),
                         item.getPawnItemDetailsList().stream()
                                 .collect(Collectors.toMap(PawnItemDetails::getFieldName, PawnItemDetails::getFieldValue))
                 ))
