@@ -11,6 +11,8 @@ import java.util.Map;
 public interface PawnItemService {
     public ApiResponse createPawnItem(PawnItemRequest request);
 
+    public ApiResponse updatePawnItem(PawnItemRequest request);
+
     ApiResponse getPawnItems(final String category,final String sortBy);
 
     ApiResponse deletePawnItem(long id);

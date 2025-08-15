@@ -24,13 +24,17 @@ public abstract class MasterData {
     @CreatedDate
     @Column(
             name = "created_at",
-            nullable = false,
+//            nullable = false,
             updatable = false
     )
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(insertable = false)
+    @Column(
+            name = "updated_at",
+            updatable = false
+//            insertable = true
+    )
     private LocalDateTime updatedAt;
 
     @Column

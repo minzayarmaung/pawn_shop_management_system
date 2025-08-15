@@ -14,7 +14,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class PawnItemsResponse {
 
-    private long id;
+    private long customerId;
     private String customerName;
     private String customerNrc;
     private String customerAddress;
@@ -22,6 +22,7 @@ public class PawnItemsResponse {
     private String category;
     private BigDecimal amount;
 
+    private long pawnId;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate pawnDate;
 
@@ -29,6 +30,7 @@ public class PawnItemsResponse {
     private LocalDate dueDate;
 
     private String status;
+    private long voucherCode;
     private String description;
     private Map<String, String> details;
 }

@@ -88,6 +88,30 @@ public class PawnItemController {
         return ResponseUtils.buildResponse(servletRequest , response);
     }
 
+    @RequestMapping("/update-pawn-item")
+    @PostMapping
+    @Operation(
+            summary = "Update Pawn Item",
+            description = "Update Pawn Item.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Pawn Item Update request",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = PawnItemRequest.class))
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Pawn Item updated successfully"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request")
+            }
+    )
+    public ResponseEntity<ApiResponse> updatePawnItem(
+            @RequestBody PawnItemRequest request,
+            HttpServletRequest servletRequest) {
+
+        ApiResponse response = pawnItemService.updatePawnItem(request);
+        return ResponseUtils.buildResponse(servletRequest, response);
+    }
+
+
 
 
 }

@@ -101,6 +101,7 @@ public class PawnItemServiceImpl implements PawnItemService {
             transaction.setDueDate(request.getDueDate());
             transaction.setLoanAmount(BigDecimal.valueOf(request.getAmount()));
             transaction.setRedeemed(false);
+            transaction.setVoucherNumber(String.valueOf(pawnItem.getVoucherCode()));
             pawnTransactionRepository.save(transaction);
 
             // 5. Build ApiResponse
@@ -132,6 +133,107 @@ public class PawnItemServiceImpl implements PawnItemService {
     }
 
     @Override
+    public ApiResponse updatePawnItem(PawnItemRequest request) {
+        currentDateTime = LocalDateTime.parse(serverUtils.getLocalDateTime(), formatter);
+        Customer customer = new Customer();
+
+        PawnItem pawnItem = pawnItemRepository.findById(request.getPawnId())
+                .orElseThrow(() -> new RuntimeException("Pawn Item does not Exist."));
+
+        // Load the current customer being updated
+        customer = customerRepository.findById(Long.valueOf(request.getCustomerId()))
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        Optional<Customer> nrcOwner = customerRepository.findByNationalId(request.getCustomerNrc());
+        Optional<Customer> phoneNoOwner = customerRepository.findByPhoneNumber(request.getCustomerPhone());
+
+        // If NRC is already Belong to someone in the table.
+        if(nrcOwner.isPresent() && !nrcOwner.get().getId().equals(customer.getId())){
+            return ApiResponse.builder()
+                    .success(0)
+                    .code(500)
+                    .message("NRC Already Exist to Another Customer !")
+                    .meta(Map.of(
+                            "timestamp", System.currentTimeMillis()
+                    ))
+                    .build();
+        } else if(phoneNoOwner.isPresent() && !phoneNoOwner.get().getId().equals(customer.getId())){
+            return ApiResponse.builder()
+                    .success(0)
+                    .code(500)
+                    .message("Phone No Already Exist to Another Customer !")
+                    .meta(Map.of(
+                            "timestamp", System.currentTimeMillis()
+                    ))
+                    .build();
+        } else {
+            // Customer
+            customer.setUpdatedAt(currentDateTime);
+            customer.setName(request.getCustomerName());
+            customer.setPhoneNumber(request.getCustomerPhone());
+            customer.setNationalId(request.getCustomerNrc());
+            customer.setAddress(request.getCustomerAddress());
+            customerRepository.save(customer);
+
+            //Pawn Item
+            // 2. Create pawn item
+            pawnItem.setUpdatedAt(currentDateTime);
+            pawnItem.setCategory(request.getCategory());
+            pawnItem.setAmount(request.getAmount());
+            pawnItem.setPawnDate(request.getPawnDate());
+            pawnItem.setVoucherCode(Long.parseLong(request.getVoucherCode()));
+            pawnItem.setDueDate(request.getDueDate());
+            pawnItem.setCustomer(customer);
+            pawnItem.setDescription(request.getDescription());
+
+            // 3. Add details
+            pawnItem.getPawnItemDetailsList().clear();
+            request.getDetails().forEach((key, value) -> {
+                PawnItemDetails detail = new PawnItemDetails();
+                detail.setCreatedAt(currentDateTime);
+                detail.setUpdatedAt(currentDateTime);
+                detail.setFieldName(key);
+                detail.setFieldValue(value);
+                detail.setPawnItem(pawnItem);
+                pawnItem.getPawnItemDetailsList().add(detail);
+            });
+
+            pawnItemRepository.save(pawnItem);
+
+            // 4. Create transaction
+            // Fetch pawn transaction (instead of creating new)
+            PawnTransaction transaction = pawnTransactionRepository
+                    .findByPawnItemId(pawnItem.getId())
+                    .orElseThrow(() -> new RuntimeException("Pawn Transaction does not exist."));
+
+            transaction.setUpdatedAt(currentDateTime);
+            transaction.setCustomer(customer);
+            transaction.setPawnItem(pawnItem);
+            transaction.setPawnDate(request.getPawnDate());
+            transaction.setDueDate(request.getDueDate());
+            transaction.setLoanAmount(BigDecimal.valueOf(request.getAmount()));
+            transaction.setRedeemed(false);
+            transaction.setVoucherNumber(String.valueOf(pawnItem.getVoucherCode()));
+            pawnTransactionRepository.save(transaction);
+
+            // 5. Build ApiResponse
+            return ApiResponse.builder()
+                    .success(1)
+                    .code(200)
+                    .message("Pawn item Updated successfully")
+                    .data(Map.of(
+                            "customerId", customer.getId(),
+                            "pawnItemId", pawnItem.getId(),
+                            "transactionId", transaction.getId()
+                    ))
+                    .meta(Map.of(
+                            "timestamp", System.currentTimeMillis()
+                    ))
+                    .build();
+        }
+    }
+
+    @Override
     public ApiResponse getPawnItems(final String category,final String sortBy) {
         List<PawnItem> items;
 
@@ -154,16 +256,18 @@ public class PawnItemServiceImpl implements PawnItemService {
 
         List<PawnItemsResponse> responseList = items.stream()
                 .map(item -> new PawnItemsResponse(
-                        item.getId(),
+                        item.getCustomer().getId(),
                         item.getCustomer().getName(),
                         item.getCustomer().getNationalId(),
                         item.getCustomer().getAddress(),
                         item.getCustomer().getPhoneNumber(),
                         item.getCategory(),
                         BigDecimal.valueOf(item.getAmount()),
+                        item.getId(),
                         item.getPawnDate(),
                         item.getDueDate(),
                         item.getStatus().name(),
+                        item.getVoucherCode(),
                         item.getDescription(),
                         item.getPawnItemDetailsList().stream()
                                 .collect(Collectors.toMap(PawnItemDetails::getFieldName, PawnItemDetails::getFieldValue))
