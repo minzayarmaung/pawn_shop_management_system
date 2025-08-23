@@ -31,6 +31,10 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
 	implementation "org.springframework.boot:spring-boot-starter-security"
 	implementation"com.amazonaws:aws-java-sdk-s3:1.12.788"
+	// https://mvnrepository.com/artifact/software.amazon.awssdk/s3
+	implementation("software.amazon.awssdk:s3:2.32.24")
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.flywaydb:flyway-mysql'
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'

@@ -44,8 +44,7 @@ public class PawnItemController {
         return ResponseUtils.buildResponse(servletRequest, response);
     }
 
-    @RequestMapping("/all-pawn-items")
-    @GetMapping
+    @GetMapping("/all-pawn-items")
     @Operation(
             summary = "Get All Pawn Items",
             description = "Get All Pawn Items",
@@ -66,8 +65,7 @@ public class PawnItemController {
         return ResponseUtils.buildResponse(servletRequest , response);
     }
 
-    @RequestMapping("/delete-pawn-item")
-    @PostMapping
+    @PostMapping("/delete-pawn-item")
     @Operation(
             summary = "Delete Pawn Item",
             description = "Delete Pawn Item",
@@ -88,8 +86,7 @@ public class PawnItemController {
         return ResponseUtils.buildResponse(servletRequest , response);
     }
 
-    @RequestMapping("/update-pawn-item")
-    @PostMapping
+    @PostMapping("/update-pawn-item")
     @Operation(
             summary = "Update Pawn Item",
             description = "Update Pawn Item.",
@@ -110,8 +107,5 @@ public class PawnItemController {
         ApiResponse response = pawnItemService.updatePawnItem(request);
         return ResponseUtils.buildResponse(servletRequest, response);
     }
-
-
-
 
 }

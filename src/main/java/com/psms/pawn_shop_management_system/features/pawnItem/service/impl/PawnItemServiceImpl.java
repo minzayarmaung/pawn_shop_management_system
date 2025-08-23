@@ -38,7 +38,7 @@ public class PawnItemServiceImpl implements PawnItemService {
 
     @Override
     public ApiResponse createPawnItem(PawnItemRequest request) {
-        currentDateTime = LocalDateTime.parse(serverUtils.getLocalDateTime(), formatter);
+
 
         boolean isAlreadyExist = false;
         Customer customer = new Customer();
