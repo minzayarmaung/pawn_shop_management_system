@@ -125,7 +125,8 @@ public class ProfileServiceImpl implements ProfileService {
                             profile1.getDob(),
                             profile1.getGender(),
                             profile1.getUser().getId(),
-                            profile1.getUser().getUsername()
+                            profile1.getUser().getUsername(),
+                            profile1.getUser().getEmail()
                     ))
                     .toList();
 

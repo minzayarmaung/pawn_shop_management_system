@@ -11,6 +11,7 @@ import lombok.Setter;
 public class User extends MasterData {
 
     private String username;
+    private String email;
     private String password;
     private String role;
 }

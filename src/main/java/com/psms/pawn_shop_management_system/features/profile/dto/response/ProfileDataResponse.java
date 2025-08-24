@@ -16,6 +16,7 @@ public class ProfileDataResponse {
     private String dob;
     private String gender;
     private long userid;
+    private String username;
     private String email;
 
 }
