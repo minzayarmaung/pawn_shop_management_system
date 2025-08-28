@@ -26,9 +26,7 @@ public class S3Service {
 
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
-
-    @Autowired
-    private SystemUtils systemUtils;
+    private final SystemUtils systemUtils;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucketName;

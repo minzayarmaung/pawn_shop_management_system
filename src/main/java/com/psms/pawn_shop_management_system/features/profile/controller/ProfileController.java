@@ -25,7 +25,6 @@ import java.io.IOException;
 @Tag(name  = "Profile API" , description = "End Points for Managing Profile Data")
 public class ProfileController {
 
-    @Autowired
     private final S3Service s3Service;
 
     private final ProfileService profileService;

@@ -34,13 +34,9 @@ public class ProfileServiceImpl implements ProfileService {
     private LocalDateTime currentDateTime;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    @Autowired
-    private ProfileRepository profileRepository;
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private SystemUtils systemUtils;
+    private final ProfileRepository profileRepository;
+    private final UserRepository userRepository;
+    private final SystemUtils systemUtils;
 
     @Override
     public ApiResponse uploadProfileData(ProfileDataRequest request) {
