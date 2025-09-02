@@ -17,7 +17,7 @@ public class JWTUtil {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    private static final long TOKEN_Valid_Time = 12 * 3600;
+    private static final long TOKEN_VALID_TIME_MILLIS = 12 * 60 * 60 * 1000L; // 12 hours in milliseconds
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));

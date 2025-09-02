@@ -39,6 +39,7 @@ public class PawnItemServiceImpl implements PawnItemService {
     @Override
     public ApiResponse createPawnItem(PawnItemRequest request) {
 
+        System.out.println(currentDateTime);
 
         boolean isAlreadyExist = false;
         Customer customer = new Customer();
@@ -135,6 +136,7 @@ public class PawnItemServiceImpl implements PawnItemService {
     @Override
     public ApiResponse updatePawnItem(PawnItemRequest request) {
         currentDateTime = LocalDateTime.parse(serverUtils.getLocalDateTime(), formatter);
+        System.out.println( "Current Time: " + currentDateTime);
         Customer customer = new Customer();
 
         PawnItem pawnItem = pawnItemRepository.findById(request.getPawnId())

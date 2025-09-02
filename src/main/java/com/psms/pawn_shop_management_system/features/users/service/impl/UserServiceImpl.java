@@ -83,6 +83,7 @@ public class UserServiceImpl implements UserService {
                 .code(200)
                 .message("Login Successfully.")
                 .data(Map.of(
+                        "userId",user.getId(),
                         "username", user.getUsername(),
                         "email", user.getEmail(),
                         "role", user.getRole(),

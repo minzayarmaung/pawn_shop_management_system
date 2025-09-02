@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @Getter
 @Setter
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners(org.springframework.data.jpa.domain.support.AuditingEntityListener.class)
 public abstract class MasterData {
 
     @Id
@@ -22,19 +22,11 @@ public abstract class MasterData {
     private Long id;
 
     @CreatedDate
-    @Column(
-            name = "created_at",
-//            nullable = false,
-            updatable = false
-    )
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(
-            name = "updated_at",
-            updatable = false
-//            insertable = true
-    )
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     @Column
@@ -48,5 +40,5 @@ public abstract class MasterData {
         this.setStatus(Status.INACTIVE);
         this.setDeletedAt(LocalDateTime.now());
     }
-
 }
+

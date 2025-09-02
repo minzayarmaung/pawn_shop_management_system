@@ -27,6 +27,9 @@ public class JWTFilter extends OncePerRequestFilter {
     private static final String[] WHITELIST = {
             "/api/v1/auth/user/login",
             "/api/v1/auth/user/extractToken",
+            "/api/v1/auth/user/send-otp",
+            "/api/v1/auth/user/verify-otp",
+            "/api/v1/auth/user/sign-up",
             "/api/v1/auth/user/generateNewToken",
             "/swagger-ui/**",
             "/v3/api-docs/**"

@@ -41,12 +41,12 @@ public class ServerUtils {
             claims.put("email", customUser.getEmail());
         }
 
-        long access_Token_ExpireTime = 1000 * 60 * 1;
+        final long TOKEN_VALID_TIME_MILLIS = 12 * 60 * 60 * 1000L; // 12 hours in milliseconds
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis()+ access_Token_ExpireTime))
+                .setExpiration(new Date(System.currentTimeMillis()+ TOKEN_VALID_TIME_MILLIS))
                 .signWith(Keys.hmacShaKeyFor(SecretKey.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
                 .compact();
     }
