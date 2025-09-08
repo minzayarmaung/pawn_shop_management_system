@@ -16,4 +16,6 @@ public interface PawnItemService {
     ApiResponse getPawnItems(final String category,final String sortBy);
 
     ApiResponse deletePawnItem(long id);
+
+    ApiResponse checkOutPawnItem(PawnItemRequest pawnItemRequest);
 }

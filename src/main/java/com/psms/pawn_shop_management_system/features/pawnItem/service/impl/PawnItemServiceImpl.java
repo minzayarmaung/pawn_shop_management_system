@@ -38,9 +38,6 @@ public class PawnItemServiceImpl implements PawnItemService {
 
     @Override
     public ApiResponse createPawnItem(PawnItemRequest request) {
-
-        System.out.println(currentDateTime);
-
         boolean isAlreadyExist = false;
         Customer customer = new Customer();
         PawnItem pawnItem = new PawnItem();
@@ -242,7 +239,7 @@ public class PawnItemServiceImpl implements PawnItemService {
         if (category != null && sortBy.equalsIgnoreCase("CheckedOutItems") && !category.equalsIgnoreCase("all")) {
             items = pawnItemRepository.findByCategoryAndStatus(category, Status.INACTIVE);
         } else if (category !=null && sortBy.equalsIgnoreCase("CheckedOutItems") && category.equalsIgnoreCase("all")){
-            items = pawnItemRepository.findByStatus(Status.INACTIVE);
+            items = pawnItemRepository.findByStatus(Status.CHECKEDOUT);
         } else if (category != null && !category.equalsIgnoreCase("All")) {
             items = pawnItemRepository.findByCategoryAndStatus(category, Status.ACTIVE);
         } else {
@@ -286,7 +283,7 @@ public class PawnItemServiceImpl implements PawnItemService {
 
     @Override
     public ApiResponse deletePawnItem(final long id) {
-
+        currentDateTime = LocalDateTime.parse(serverUtils.getLocalDateTime(), formatter);
         Optional<PawnItem> pawnItemOpt = pawnItemRepository.findById(id);
         if (pawnItemOpt.isEmpty()) {
             return ApiResponse.builder()
@@ -318,4 +315,41 @@ public class PawnItemServiceImpl implements PawnItemService {
                 .data(null)
                 .build();
     }
+
+    @Override
+    public ApiResponse checkOutPawnItem(PawnItemRequest pawnItemRequest) {
+        currentDateTime = LocalDateTime.parse(serverUtils.getLocalDateTime(), formatter);
+        Optional<PawnItem> pawnItemOpt = pawnItemRepository.findById(pawnItemRequest.getPawnId());
+        if (pawnItemOpt.isEmpty()) {
+            return ApiResponse.builder()
+                    .success(0)
+                    .code(404)
+                    .message("Pawn item not found")
+                    .data(null)
+                    .build();
+        }
+
+        // Parent Item
+        PawnItem pawnItem = pawnItemOpt.get();
+        pawnItem.setStatus(Status.CHECKEDOUT);
+        pawnItem.setCheckOutDate(currentDateTime);
+
+        // Item Details
+        if (pawnItem.getPawnItemDetailsList() != null) {
+            pawnItem.getPawnItemDetailsList().forEach(detail -> {
+                detail.setStatus(Status.CHECKEDOUT);
+                detail.setCheckOutDate(currentDateTime);
+            });
+        }
+        pawnItemRepository.save(pawnItem);
+
+        return ApiResponse.builder()
+                .success(1)
+                .code(200)
+                .message("Pawn Item Checked Out successfully")
+                .data(null)
+                .build();
+    }
 }
+
+

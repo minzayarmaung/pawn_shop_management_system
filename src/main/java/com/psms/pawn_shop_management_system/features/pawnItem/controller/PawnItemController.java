@@ -44,6 +44,28 @@ public class PawnItemController {
         return ResponseUtils.buildResponse(servletRequest, response);
     }
 
+    @PostMapping("/check-Out-Item")
+    @Operation(
+            summary = "Check Out Pawn Item",
+            description = "Check Out Pawn Item.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Pawn Item Check Out Request",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = PawnItemRequest.class))
+            ),
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Pawn Item Checked Out Successfully"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Invalid request")
+            }
+    )
+    public ResponseEntity<ApiResponse> checkOutPawnItem(
+            @RequestBody PawnItemRequest pawnItemRequest,
+            HttpServletRequest request
+    ){
+        ApiResponse response = pawnItemService.checkOutPawnItem(pawnItemRequest);
+        return ResponseUtils.buildResponse(request , response);
+    }
+
     @GetMapping("/all-pawn-items")
     @Operation(
             summary = "Get All Pawn Items",

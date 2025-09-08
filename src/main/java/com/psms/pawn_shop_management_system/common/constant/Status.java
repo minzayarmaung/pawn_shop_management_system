@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 public enum Status implements BaseEnum<Integer>{
     ACTIVE(1),
-    INACTIVE(4);
-
+    INACTIVE(4),
+    CHECKEDOUT(8);
     private final int value;
 
     @Override

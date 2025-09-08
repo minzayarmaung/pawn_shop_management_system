@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,9 @@ public class PawnItem extends MasterData {
 
     private LocalDate pawnDate;
     private LocalDate dueDate;
+
+    @Column
+    private LocalDateTime checkOutDate;
 
     @Column(columnDefinition = "TEXT")
     private String description;
