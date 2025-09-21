@@ -30,7 +30,12 @@ public class JWTUtil {
                 .parseClaimsJws(token)
                 .getBody();
 
-        return claims.get("email", String.class);
+        // Try to get email from custom claim first, then from subject
+        String email = claims.get("email", String.class);
+        if (email == null) {
+            email = claims.getSubject();
+        }
+        return email;
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
@@ -38,7 +43,7 @@ public class JWTUtil {
             final String username = extractEmail(token); // will throw if expired
             System.out.println("extract : " + username);
             System.out.println("user.get : " + userDetails.getUsername());
-            return username.equals(userDetails.getUsername());
+            return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
         } catch (JwtException e) {
             return false;
         }
@@ -52,12 +57,26 @@ public class JWTUtil {
         return null;
     }
 
-    public String generateToken(String username, long expirationMillis) {
+    public String generateToken(String email, long expirationMillis) {
         return Jwts.builder()
-                .setSubject(username)
+                .setSubject(email)
+                .claim("email", email) // Add email as a custom claim for consistency
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expirationMillis))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    private boolean isTokenExpired(String token) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+            return claims.getExpiration().before(new Date());
+        } catch (JwtException e) {
+            return true;
+        }
     }
 }

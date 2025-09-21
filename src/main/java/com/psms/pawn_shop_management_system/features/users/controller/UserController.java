@@ -3,8 +3,10 @@ package com.psms.pawn_shop_management_system.features.users.controller;
 import com.psms.pawn_shop_management_system.config.response.dto.ApiResponse;
 import com.psms.pawn_shop_management_system.config.response.util.ResponseUtils;
 import com.psms.pawn_shop_management_system.config.response.util.ServerUtils;
+import com.psms.pawn_shop_management_system.features.users.dto.request.GoogleOAuthRequest;
 import com.psms.pawn_shop_management_system.features.users.dto.request.LoginRequest;
 import com.psms.pawn_shop_management_system.features.users.dto.request.SignUpRequest;
+import com.psms.pawn_shop_management_system.features.users.service.GoogleOAuthService;
 import com.psms.pawn_shop_management_system.features.users.service.OtpService;
 import com.psms.pawn_shop_management_system.features.users.service.UserService;
 import com.psms.pawn_shop_management_system.features.users.service.impl.UserDetailServiceImpl;
@@ -13,6 +15,7 @@ import io.jsonwebtoken.Jwts;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.GeneralSecurityException;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -53,6 +57,15 @@ public class UserController {
             HttpServletRequest request
             ){
         final ApiResponse response = this.userService.createNewUser(signUpRequest);
+        return ResponseUtils.buildResponse(request , response);
+    }
+
+    @PostMapping("/google-oauth")
+    public ResponseEntity<ApiResponse> googleOAuth(
+            @Valid @RequestBody GoogleOAuthRequest googleOAuthRequest,
+            HttpServletRequest request
+            ) throws GeneralSecurityException, IOException {
+        final ApiResponse response = this.userService.oAuthService(googleOAuthRequest);
         return ResponseUtils.buildResponse(request , response);
     }
 

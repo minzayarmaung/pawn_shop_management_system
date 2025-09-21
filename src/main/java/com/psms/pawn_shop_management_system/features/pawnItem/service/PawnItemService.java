@@ -1,6 +1,7 @@
 package com.psms.pawn_shop_management_system.features.pawnItem.service;
 
 import com.psms.pawn_shop_management_system.config.response.dto.ApiResponse;
+import com.psms.pawn_shop_management_system.config.response.dto.PaginatedApiResponse;
 import com.psms.pawn_shop_management_system.features.pawnItem.dto.request.PawnItemRequest;
 import org.springframework.stereotype.Service;
 
@@ -18,4 +19,6 @@ public interface PawnItemService {
     ApiResponse deletePawnItem(long id);
 
     ApiResponse checkOutPawnItem(PawnItemRequest pawnItemRequest);
+
+    PaginatedApiResponse getPawnItemReportList(Map<String, String> body);
 }

@@ -1,28 +1,28 @@
 package com.psms.pawn_shop_management_system.features.users.service.impl;
 
 import com.psms.pawn_shop_management_system.common.constant.Status;
-import com.psms.pawn_shop_management_system.config.exceptions.DuplicateEntityException;
 import com.psms.pawn_shop_management_system.config.response.dto.ApiResponse;
 import com.psms.pawn_shop_management_system.config.response.util.ServerUtils;
+import com.psms.pawn_shop_management_system.features.users.dto.request.GoogleOAuthRequest;
 import com.psms.pawn_shop_management_system.features.users.dto.request.LoginRequest;
 import com.psms.pawn_shop_management_system.features.users.dto.request.SignUpRequest;
+import com.psms.pawn_shop_management_system.features.users.dto.response.GoogleOAuthResponse;
 import com.psms.pawn_shop_management_system.features.users.repository.UserRepository;
+import com.psms.pawn_shop_management_system.features.users.service.AuthService;
+import com.psms.pawn_shop_management_system.features.users.service.GoogleOAuthService;
 import com.psms.pawn_shop_management_system.features.users.service.UserService;
 import com.psms.pawn_shop_management_system.model.User;
-import com.psms.pawn_shop_management_system.model.UserDetail;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
@@ -38,6 +38,11 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authManager;
     private final ServerUtils serverUtils;
+
+    @Autowired
+    private GoogleOAuthService googleOAuthService;
+    @Autowired
+    private AuthService authService;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 
@@ -123,5 +128,60 @@ public class UserServiceImpl implements UserService {
                 ))
                 .meta(Map.of("timestamp", System.currentTimeMillis()))
                 .build();
+    }
+
+    @Override
+    public ApiResponse oAuthService(GoogleOAuthRequest googleOAuthRequest) {
+
+        // Add validation for token
+        if (googleOAuthRequest.getToken() == null || googleOAuthRequest.getToken().trim().isEmpty()) {
+            return ApiResponse.builder()
+                    .success(0)
+                    .code(400)
+                    .message("Token is required")
+                    .data(null)
+                    .meta(Map.of("timestamp", System.currentTimeMillis()))
+                    .build();
+        }
+
+        try {
+            GoogleOAuthService.GoogleUserInfo googleUserInfo;
+
+            // Try to verify as ID token first, then as access token
+            try {
+                googleUserInfo = googleOAuthService.verifyIdToken(googleOAuthRequest.getToken());
+            } catch (Exception e) {
+                // If ID token verification fails, try as access token
+                googleUserInfo = googleOAuthService.verifyAccessToken(googleOAuthRequest.getToken());
+            }
+
+            // Process the OAuth and get the response with user data and JWT token
+            GoogleOAuthResponse googleOAuthResponse = authService.processGoogleOAuth(googleUserInfo);
+
+            return ApiResponse.builder()
+                    .success(1)
+                    .code(200)
+                    .message("Google OAuth2 Successfully.")
+                    .data(googleOAuthResponse)  // ✅ IMPORTANT: Return the actual data
+                    .meta(Map.of("timestamp", System.currentTimeMillis()))
+                    .build();
+
+        } catch (IOException e) {
+            return ApiResponse.builder()
+                    .success(0)
+                    .code(401)
+                    .message("Invalid Google token: " + e.getMessage())
+                    .data(null)
+                    .meta(Map.of("timestamp", System.currentTimeMillis()))
+                    .build();
+        } catch (Exception e) {
+            return ApiResponse.builder()
+                    .success(0)
+                    .code(500)
+                    .message("Internal server error: " + e.getMessage())
+                    .data(null)
+                    .meta(Map.of("timestamp", System.currentTimeMillis()))
+                    .build();
+        }
     }
 }

@@ -4,27 +4,22 @@ import com.psms.pawn_shop_management_system.common.constant.Status;
 import com.psms.pawn_shop_management_system.common.util.SystemUtils;
 import com.psms.pawn_shop_management_system.config.response.dto.ApiResponse;
 import com.psms.pawn_shop_management_system.config.response.util.ServerUtils;
-import com.psms.pawn_shop_management_system.features.pawnItem.dto.response.PawnItemsResponse;
 import com.psms.pawn_shop_management_system.features.profile.dto.request.ProfileDataRequest;
 import com.psms.pawn_shop_management_system.features.profile.dto.response.ProfileDataResponse;
 import com.psms.pawn_shop_management_system.features.profile.repository.ProfileRepository;
 import com.psms.pawn_shop_management_system.features.profile.service.ProfileService;
 import com.psms.pawn_shop_management_system.features.users.repository.UserRepository;
-import com.psms.pawn_shop_management_system.model.PawnItemDetails;
 import com.psms.pawn_shop_management_system.model.Profile;
 import com.psms.pawn_shop_management_system.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

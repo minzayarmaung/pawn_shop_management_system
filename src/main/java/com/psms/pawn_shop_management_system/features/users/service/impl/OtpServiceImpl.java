@@ -11,7 +11,6 @@ import com.psms.pawn_shop_management_system.features.users.service.OtpService;
 import com.psms.pawn_shop_management_system.model.User;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,7 @@
 package com.psms.pawn_shop_management_system.features.pawnItem.controller;
 
 import com.psms.pawn_shop_management_system.config.response.dto.ApiResponse;
+import com.psms.pawn_shop_management_system.config.response.dto.PaginatedApiResponse;
 import com.psms.pawn_shop_management_system.config.response.util.ResponseUtils;
 import com.psms.pawn_shop_management_system.features.pawnItem.dto.request.PawnItemRequest;
 import com.psms.pawn_shop_management_system.features.pawnItem.service.PawnItemService;
@@ -13,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -128,6 +131,15 @@ public class PawnItemController {
 
         ApiResponse response = pawnItemService.updatePawnItem(request);
         return ResponseUtils.buildResponse(servletRequest, response);
+    }
+
+    @PostMapping("/getPawnItemReportList")
+    public ResponseEntity<PaginatedApiResponse> getPawnItemReportList(
+            @RequestBody Map<String, String> body,
+            HttpServletRequest request
+            ){
+        PaginatedApiResponse response = pawnItemService.getPawnItemReportList(body);
+        return ResponseUtils.buildPaginatedResponse(request , response);
     }
 
 }

@@ -31,6 +31,9 @@ public class JWTFilter extends OncePerRequestFilter {
             "/api/v1/auth/user/verify-otp",
             "/api/v1/auth/user/sign-up",
             "/api/v1/auth/user/generateNewToken",
+            "/api/v1/auth/user/google-oauth", // ✅ Added this line
+            "/auth/user/google-oauth",       // ✅ Added this line too
+            "/api/*/auth/user/**",           // ✅ Added wildcard pattern for dynamic API paths
             "/swagger-ui/**",
             "/v3/api-docs/**"
     };

@@ -38,5 +38,6 @@ public interface PawnItemRepository extends JpaRepository<PawnItem, Long> {
     List<PawnItem> findByCategoryAndStatusNative(@Param("category") String category, @Param("status") int status);
 
 
+    Optional<PawnItem> findByIdAndStatus(long pawnId, Status status);
 }
 

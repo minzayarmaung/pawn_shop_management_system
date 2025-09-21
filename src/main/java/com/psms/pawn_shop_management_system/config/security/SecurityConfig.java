@@ -45,7 +45,18 @@ public class SecurityConfig {
     private static final String[] AUTH_WHITELIST = {
             "/api/v1/auth/**",
             "/auth/user",
-            "/api/v1/auth/user/extractToken"
+            "/api/v1/auth/user/extractToken",
+            "/auth/user/login",
+            "/auth/user/sign-up",
+            "/auth/user/send-otp",
+            "/auth/user/verify-otp",
+            "/auth/user/forgot-password",
+            "/auth/user/reset-password",
+            "/auth/user/google-oauth",
+            "/api/v1/auth/user/google-oauth",
+            "${api.base.path}/auth/user/**",  // ✅ Added dynamic path support
+            "/oauth2/**",
+            "/login/oauth2/**"
     };
 
     @Bean
@@ -61,7 +72,6 @@ public class SecurityConfig {
         provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
@@ -81,7 +91,12 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider(userDetailsService, passwordEncoder()))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/auth/oauth2/success", true)
+                        .failureUrl("/auth/oauth2/failure")
+                );
         return http.build();
     }
 

@@ -2,6 +2,7 @@ package com.psms.pawn_shop_management_system.features.pawnItem.service.impl;
 
 import com.psms.pawn_shop_management_system.common.constant.Status;
 import com.psms.pawn_shop_management_system.config.response.dto.ApiResponse;
+import com.psms.pawn_shop_management_system.config.response.dto.PaginatedApiResponse;
 import com.psms.pawn_shop_management_system.config.response.util.ServerUtils;
 import com.psms.pawn_shop_management_system.features.pawnItem.dto.request.PawnItemRequest;
 import com.psms.pawn_shop_management_system.features.pawnItem.dto.response.PawnItemsResponse;
@@ -320,11 +321,21 @@ public class PawnItemServiceImpl implements PawnItemService {
     public ApiResponse checkOutPawnItem(PawnItemRequest pawnItemRequest) {
         currentDateTime = LocalDateTime.parse(serverUtils.getLocalDateTime(), formatter);
         Optional<PawnItem> pawnItemOpt = pawnItemRepository.findById(pawnItemRequest.getPawnId());
+        Optional<PawnItem> isPawnItemAlreadyCheckout = pawnItemRepository.findByIdAndStatus(pawnItemRequest.getPawnId() , Status.CHECKEDOUT);
         if (pawnItemOpt.isEmpty()) {
             return ApiResponse.builder()
                     .success(0)
                     .code(404)
                     .message("Pawn item not found")
+                    .data(null)
+                    .build();
+        }
+
+        if(isPawnItemAlreadyCheckout.isPresent()){
+            return ApiResponse.builder()
+                    .success(1)
+                    .code(500)
+                    .message("Pawn Item Already Checked Out.")
                     .data(null)
                     .build();
         }
@@ -349,6 +360,11 @@ public class PawnItemServiceImpl implements PawnItemService {
                 .message("Pawn Item Checked Out successfully")
                 .data(null)
                 .build();
+    }
+
+    @Override
+    public PaginatedApiResponse getPawnItemReportList(Map<String, String> body) {
+        return null;
     }
 }
 
